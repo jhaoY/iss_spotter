@@ -38,12 +38,33 @@ const fetchCoordsByIP = (ip, callback) => {
       callback(Error(msg), null);
       return;
     }
-    const long = data.longitude;
-    const lat = data.latitude;
-    const coordinates = { lat, long };
+    const longitude = data.longitude;
+    const latitude = data.latitude;
+    const coordinates = { latitude, longitude };
     callback(null, coordinates);
   });
 };
 
+const fetchISSFlyOverTimes = (coords, callback) => {
+  request(`https://iss-flyover.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`, (error, response, body) => {
+    if (error) {
+      callback(error, null)
+      return;
+    }
+    const data = JSON.parse(body);
+    if (data.message !== "success") {
+      const msg = `Success status was ${data.message} when fetch for coordinates ${coords}`
+      callback(Error(msg), null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      const msg = `Status code was ${response.statusCode} when fetching coordinates ${body}`
+      callback(Error(msg), null)
+      return;
+    }
+      const orbitTimes = data.response;
+    callback(null, orbitTimes);
+  })
+};
 
-module.exports = { fetchMyIP, fetchCoordsByIP };
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
