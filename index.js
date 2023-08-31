@@ -43,3 +43,7 @@ nextISSTimesForMyLocation((error, orbitTimes) => {
   // success, print out the deets!
   printOrbitTimes(orbitTimes);
 });
+
+module.exports = {
+  printOrbitTimes,
+}
